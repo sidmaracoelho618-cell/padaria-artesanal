@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padaria & Empório Sabor Real - Simulação do Projeto</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandYellow: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                        },
+                        brandRed: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                        },
+                        cream: '#fffdfa',
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fffdfa;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+        .bg-warm-pattern {
+            background-color: #fef2f2;
+            background-image: radial-gradient(#eab308 0.75px, transparent 0.75px), radial-gradient(#eab308 0.75px, #fef2f2 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-slate-800 bg-cream min-h-screen flex flex-col justify-between selection:bg-brandYellow-400 selection:text-brandRed-800">
+
+    <!-- Simulation Watermark / Control Bar -->
+    <div class="bg-slate-900 text-white text-xs py-2 px-4 shadow-md flex flex-wrap items-center justify-between gap-2 z-50 sticky top-0">
+        <div class="flex items-center gap-2">
+            <span class="bg-brandRed-600 text-white font-extrabold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Modo Simulação</span>
+            <span class="text-slate-300 font-medium">Testando a experiência do cliente final</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSound()" id="sound-toggle-btn" class="hover:text-brandYellow-400 flex items-center gap-1 transition-colors">
+                <i class="fa-solid fa-volume-high text-xs" id="sound-icon"></i>
+                <span id="sound-label">Efeitos Sonoros: ON</span>
+            </button>
+            <span class="text-slate-600">|</span>
+            <button onclick="openPartyCalculator()" class="hover:text-brandYellow-400 flex items-center gap-1 transition-colors font-bold text-brandYellow-400">
+                <i class="fa-solid fa-calculator text-xs"></i>
+                <span>Simulador de Festas</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Fresh Bread Live Countdown Top Banner -->
+    <div class="bg-brandRed-700 text-amber-100 text-xs sm:text-sm py-2 px-4 text-center font-medium flex items-center justify-center gap-2 shadow-inner">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Próxima fornada de Pão Francês quentinho em: <strong id="baking-timer" class="text-brandYellow-400 font-extrabold font-mono">08:42</strong></span>
+        <button onclick="simulateFreshBatch()" class="ml-2 bg-amber-100 hover:bg-white text-brandRed-800 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full transition-all">Simular Fornada!</button>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-[32px] z-40 bg-white/95 backdrop-blur-md border-b border-amber-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brandYellow-400 to-brandRed-600 flex items-center justify-center text-white shadow-md shadow-brandRed-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-wheat-awn text-2xl text-amber-100"></i>
+                </div>
+                <div>
+                    <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 block leading-none">
+                        Sabor<span class="text-brandRed-600">Real</span>
+                    </span>
+                    <span class="text-[11px] text-amber-700 font-bold tracking-wider uppercase">Padaria & Empório</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-700">
+                <a href="#encomendas" class="hover:text-brandRed-600 transition-colors py-1 border-b-2 border-transparent hover:border-brandRed-600">Produtos & Cardápio</a>
+                <a href="#como-pedir" class="hover:text-brandRed-600 transition-colors py-1 border-b-2 border-transparent hover:border-brandRed-600">Como Funciona</a>
+                <a href="#simulador-pedidos" class="hover:text-brandRed-600 transition-colors py-1 border-b-2 border-transparent hover:border-brandRed-600">Simulador de Pedido</a>
+                <a href="#onde-estamos" class="hover:text-brandRed-600 transition-colors py-1 border-b-2 border-transparent hover:border-brandRed-600">Onde Estamos</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCartDrawer()" class="relative bg-amber-100 hover:bg-amber-200 text-brandRed-800 p-3 rounded-xl transition-all flex items-center gap-2 font-bold text-sm shadow-sm active:scale-95">
+                    <i class="fa-solid fa-basket-shopping text-lg text-brandRed-600"></i>
+                    <span class="hidden sm:inline">Ver Pedido</span>
+                    <span id="cart-badge" class="bg-brandRed-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+
+                <a href="#encomendas" class="hidden sm:inline-flex bg-gradient-to-r from-brandRed-600 to-brandRed-700 hover:from-brandRed-700 hover:to-brandRed-800 text-white font-bold px-5 py-3 rounded-xl shadow-md shadow-brandRed-600/30 hover:shadow-lg transition-all items-center gap-2">
+                    <span>Fazer Encomenda</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+
+                <!-- Mobile Navigation Toggle -->
+                <button onclick="toggleMobileNav()" class="md:hidden p-2.5 rounded-xl text-slate-700 hover:bg-amber-50">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-amber-100 px-4 py-4 space-y-3 shadow-lg">
+            <a href="#encomendas" onclick="toggleMobileNav()" class="block py-2.5 px-4 rounded-lg font-semibold text-slate-800 hover:bg-amber-50 hover:text-brandRed-600">
+                <i class="fa-solid fa-bread-slice w-6 text-brandRed-500"></i> Produtos & Cardápio
+            </a>
+            <a href="#como-pedir" onclick="toggleMobileNav()" class="block py-2.5 px-4 rounded-lg font-semibold text-slate-800 hover:bg-amber-50 hover:text-brandRed-600">
+                <i class="fa-solid fa-list-check w-6 text-brandYellow-600"></i> Como Funciona
+            </a>
+            <a href="#simulador-pedidos" onclick="toggleMobileNav()" class="block py-2.5 px-4 rounded-lg font-semibold text-slate-800 hover:bg-amber-50 hover:text-brandRed-600">
+                <i class="fa-solid fa-[#fa9b00] fa-mobile-screen-button w-6 text-brandRed-600"></i> Simulador de Pedido
+            </a>
+            <a href="#onde-estamos" onclick="toggleMobileNav()" class="block py-2.5 px-4 rounded-lg font-semibold text-slate-800 hover:bg-amber-50 hover:text-brandRed-600">
+                <i class="fa-solid fa-location-dot w-6 text-brandRed-600"></i> Onde Estamos
+            </a>
+            <div class="pt-2">
+                <a href="#encomendas" onclick="toggleMobileNav()" class="w-full bg-brandRed-600 text-white text-center font-bold py-3 rounded-xl block">
+                    Fazer Encomenda Agora
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative bg-gradient-to-b from-amber-50 via-warm-pattern to-cream py-12 md:py-20 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Hero Content -->
+                    <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                        <div class="inline-flex items-center gap-2 bg-brandYellow-100 border border-brandYellow-400 text-brandRed-800 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+                            <i class="fa-solid fa-store text-brandRed-600"></i>
+                            <span>Padaria Artesanal & Mercearia Completa</span>
+                        </div>
+                        
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight">
+                            Pães quentinhos e estivas no conforto da sua <span class="text-transparent bg-clip-text bg-gradient-to-r from-brandRed-600 via-brandRed-700 to-amber-600">família.</span>
+                        </h1>
+                        
+                        <p class="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                            Simule e encomende pães frescos, doces, salgados e mantimentos de empório. Selecione os itens e receba tudo rápido ou retire na nossa loja!
+                        </p>
+
+                        <!-- CTA Row -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                            <a href="#encomendas" class="w-full sm:w-auto bg-brandRed-600 hover:bg-brandRed-700 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-lg shadow-brandRed-600/30 hover:scale-105 transition-all text-center flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                <span>Ver Produtos & Encomendar</span>
+                            </a>
+                            <button onclick="openPartyCalculator()" class="w-full sm:w-auto bg-white border-2 border-brandYellow-500 text-slate-800 hover:bg-brandYellow-50 font-bold text-lg px-6 py-4 rounded-xl transition-all text-center flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calculator text-brandYellow-600"></i>
+                                <span>Calculadora de Festas</span>
+                            </button>
+                        </div>
+
+                        <!-- Highlights Row -->
+                        <div class="pt-6 grid grid-cols-3 gap-4 border-t border-amber-200/60 max-w-md mx-auto lg:mx-0">
+                            <div class="text-center lg:text-left">
+                                <span class="block text-2xl font-extrabold text-brandRed-700">100%</span>
+                                <span class="text-xs text-slate-600 font-medium">Fresco & Artesanal</span>
+                            </div>
+                            <div class="text-center lg:text-left">
+                                <span class="block text-2xl font-extrabold text-brandRed-700">Fácil</span>
+                                <span class="text-xs text-slate-600 font-medium">Pedido via WhatsApp</span>
+                            </div>
+                            <div class="text-center lg:text-left">
+                                <span class="block text-2xl font-extrabold text-brandRed-700">Completo</span>
+                                <span class="text-xs text-slate-600 font-medium">Padaria & Frios</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Visual Interactive Card -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative mx-auto max-w-md">
+                            <div class="absolute -inset-2 bg-gradient-to-r from-brandYellow-400 to-brandRed-500 rounded-3xl blur-xl opacity-30 animate-pulse-glow"></div>
+                            
+                            <div class="relative bg-white p-5 rounded-3xl shadow-xl border border-amber-100 space-y-4">
+                                <div class="relative h-64 sm:h-72 rounded-2xl overflow-hidden group">
+                                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80" 
+                                         alt="Pães e produtos de padaria frescos" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         onerror="this.src='https://placehold.co/600x400/facc15/b91c1c?text=Padaria+Artesanal'">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-4">
+                                        <div class="text-white space-y-1">
+                                            <span class="bg-brandYellow-400 text-brandRed-800 text-xs font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider">Simulação Interativa</span>
+                                            <h3 class="text-xl font-bold">Vitrine Virtual & Encomendas</h3>
+                                            <p class="text-xs text-amber-100">Adicione itens ao carrinho e teste a simulação de fluxo real!</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Live Interactive Counter Feature Box -->
+                                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-brandRed-600 text-white flex items-center justify-center shrink-0 text-lg font-bold">
+                                            <i class="fa-solid fa-bell-concierge"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-slate-900 text-xs">Balcão Virtual Aberto</h4>
+                                            <p class="text-[11px] text-slate-600">Simule seu pedido em tempo real</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="quickAddSample()" class="bg-brandRed-600 hover:bg-brandRed-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition-all">
+                                        + Kit Amostra
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Encomendas & Produtos Section -->
+        <section id="encomendas" class="py-16 bg-white border-y border-amber-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Section Header -->
+                <div class="text-center max-w-3xl mx-auto space-y-3 mb-10">
+                    <span class="text-brandRed-600 font-extrabold text-xs uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full border border-red-100">Cardápio Interativo</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Faça sua Encomenda</h2>
+                    <p class="text-slate-600 text-base">Monte sua sacola com nossos pães frescos, doces e produtos de mercearia. Ao finalizar, você poderá simular a entrega ou enviar no WhatsApp!</p>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+                    <!-- Category Tabs -->
+                    <div id="category-tabs" class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar">
+                        <button onclick="filterCategory('todos', this)" class="cat-btn bg-brandRed-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap shadow-sm transition-all">
+                            Todos os Produtos
+                        </button>
+                        <button onclick="filterCategory('paes', this)" class="cat-btn bg-amber-100 text-slate-700 hover:bg-amber-200 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all">
+                            <i class="fa-solid fa-bread-slice mr-1 text-brandRed-600"></i> Pães
+                        </button>
+                        <button onclick="filterCategory('doces', this)" class="cat-btn bg-amber-100 text-slate-700 hover:bg-amber-200 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all">
+                            <i class="fa-solid fa-cake-candles mr-1 text-brandRed-600"></i> Doces & Bolos
+                        </button>
+                        <button onclick="filterCategory('salgados', this)" class="cat-btn bg-amber-100 text-slate-700 hover:bg-amber-200 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all">
+                            <i class="fa-solid fa-cookie-bite mr-1 text-brandRed-600"></i> Salgados
+                        </button>
+                        <button onclick="filterCategory('estivas', this)" class="cat-btn bg-amber-100 text-slate-700 hover:bg-amber-200 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all">
+                            <i class="fa-solid fa-store mr-1 text-brandRed-600"></i> Estivas & Mercearia
+                        </button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-72">
+                        <input type="text" id="search-input" onkeyup="filterSearch()" placeholder="Buscar produto..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brandRed-500 text-sm">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic Javascript Content -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Simulador de Acompanhamento de Pedido Section -->
+        <section id="simulador-pedidos" class="py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-brandRed-950 text-white relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-3 mb-12">
+                    <span class="bg-brandYellow-400 text-brandRed-900 font-extrabold text-xs uppercase tracking-widest px-3 py-1 rounded-full">Recurso de Simulação</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Simulador de Pedido em Tempo Real</h2>
+                    <p class="text-slate-300 text-sm">Veja como seu cliente vai acompanhar o status do pão quentinho até a entrega!</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Control Panel for Simulation -->
+                    <div class="lg:col-span-5 bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-6">
+                        <h3 class="font-extrabold text-lg text-brandYellow-400 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders"></i> Painel de Controle da Simulação
+                        </h3>
+                        
+                        <div class="space-y-3 text-xs">
+                            <p class="text-slate-300">Escolha uma etapa abaixo para simular o progresso do pedido no aplicativo do cliente:</p>
+                            
+                            <div class="grid grid-cols-1 gap-2">
+                                <button onclick="setSimulatedStage(1)" id="stage-btn-1" class="stage-step-btn w-full p-3 rounded-xl bg-brandRed-600 font-bold text-left flex items-center justify-between border border-white/20">
+                                    <span>1. 📝 Pedido Recebido na Padaria</span>
+                                    <i class="fa-solid fa-check-circle"></i>
+                                </button>
+                                <button onclick="setSimulatedStage(2)" id="stage-btn-2" class="stage-step-btn w-full p-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-left flex items-center justify-between border border-white/10">
+                                    <span>2. 🥖 Na Cozinha / Forno Aqueceu</span>
+                                    <i class="fa-solid fa-fire text-amber-400"></i>
+                                </button>
+                                <button onclick="setSimulatedStage(3)" id="stage-btn-3" class="stage-step-btn w-full p-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-left flex items-center justify-between border border-white/10">
+                                    <span>3. 📦 Embalado & Empacotado</span>
+                                    <i class="fa-solid fa-box text-blue-400"></i>
+                                </button>
+                                <button onclick="setSimulatedStage(4)" id="stage-btn-4" class="stage-step-btn w-full p-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-left flex items-center justify-between border border-white/10">
+                                    <span>4. 🛵 Saiu para Entrega / Pronto</span>
+                                    <i class="fa-solid fa-motorcycle text-emerald-400"></i>
+                                </button>
+                            </div>
+
+                            <button onclick="startAutoSimulation()" class="w-full bg-brandYellow-400 hover:bg-brandYellow-500 text-brandRed-900 font-extrabold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mt-4 text-sm">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Iniciar Simulação Automática Completa</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Phone View -->
+                    <div class="lg:col-span-7 flex justify-center">
+                        <div class="w-full max-w-sm bg-slate-900 rounded-[40px] p-4 border-4 border-slate-700 shadow-2xl relative">
+                            <!-- Phone Top Bar -->
+                            <div class="w-32 h-4 bg-slate-700 rounded-full mx-auto mb-4"></div>
+                            
+                            <!-- Phone Screen Inner -->
+                            <div class="bg-cream rounded-[28px] p-5 text-slate-800 space-y-4">
+                                <div class="flex items-center justify-between border-b border-amber-200 pb-3">
+                                    <div>
+                                        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Status do Pedido #3892</span>
+                                        <h4 class="font-extrabold text-slate-900 text-base">Padaria Sabor Real</h4>
+                                    </div>
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                                </div>
+
+                                <!-- Current Active Status Card -->
+                                <div id="sim-status-card" class="bg-amber-100 border border-amber-300 p-4 rounded-2xl text-center space-y-2">
+                                    <div id="sim-status-icon" class="w-12 h-12 rounded-2xl bg-brandRed-600 text-white flex items-center justify-center text-xl mx-auto shadow-md">
+                                        <i class="fa-solid fa-receipt"></i>
+                                    </div>
+                                    <h5 id="sim-status-title" class="font-extrabold text-slate-900 text-base">Pedido Recebido!</h5>
+                                    <p id="sim-status-desc" class="text-xs text-slate-600">Sua solicitação foi registrada e está aguardando confirmação do atendente.</p>
+                                </div>
+
+                                <!-- Progress Steps Visual -->
+                                <div class="space-y-2 pt-2 text-xs">
+                                    <div class="flex items-center gap-3" id="step-indicator-1">
+                                        <div class="w-6 h-6 rounded-full bg-brandRed-600 text-white flex items-center justify-center text-[10px] font-bold">1</div>
+                                        <span class="font-bold text-slate-800">Confirmado</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 opacity-40" id="step-indicator-2">
+                                        <div class="w-6 h-6 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold">2</div>
+                                        <span class="font-bold text-slate-600">No Forno / Preparando</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 opacity-40" id="step-indicator-3">
+                                        <div class="w-6 h-6 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold">3</div>
+                                        <span class="font-bold text-slate-600">Pronto para Retirada</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 opacity-40" id="step-indicator-4">
+                                        <div class="w-6 h-6 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold">4</div>
+                                        <span class="font-bold text-slate-600">Entregue com Sucesso!</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-xl border border-slate-200 text-[11px] text-slate-500 text-center">
+                                    <i class="fa-solid fa-clock text-amber-600 mr-1"></i> Tempo estimado restante: <strong id="sim-timer-text" class="text-slate-800">15-20 min</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Como Fazer seu Pedido Section -->
+        <section id="como-pedir" class="py-16 bg-gradient-to-b from-cream to-amber-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto space-y-3 mb-12">
+                    <span class="text-brandYellow-600 font-extrabold text-xs uppercase tracking-widest bg-amber-100 px-3 py-1 rounded-full border border-amber-200">Passo a Passo</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Como Fazer seu Pedido</h2>
+                    <p class="text-slate-600">Pedir pão quentinho e mantimentos no site é prático e sem burocracia:</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="bg-white p-8 rounded-2xl border border-amber-100 shadow-md hover:shadow-lg transition-all relative overflow-hidden group">
+                        <div class="w-14 h-14 bg-brandYellow-400 text-brandRed-800 rounded-2xl flex items-center justify-center text-2xl font-black mb-6 shadow-md">
+                            1
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Escolha os Produtos</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Navegue pela nossa vitrine online, adicione pães, bolos, salgados e itens de mercearia no seu carrinho de encomendas.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white p-8 rounded-2xl border border-amber-100 shadow-md hover:shadow-lg transition-all relative overflow-hidden group">
+                        <div class="w-14 h-14 bg-brandRed-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black mb-6 shadow-md">
+                            2
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Confirme no WhatsApp</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Ao clicar em finalizar, a lista detalhada é formatada e enviada direto para o WhatsApp do nosso balcão.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white p-8 rounded-2xl border border-amber-100 shadow-md hover:shadow-lg transition-all relative overflow-hidden group">
+                        <div class="w-14 h-14 bg-amber-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black mb-6 shadow-md">
+                            3
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Retire ou Receba</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Nossa equipe prepara tudo quentinho com higiene. Você apenas escolhe se retira na loja ou recebe em casa!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Callout Banner -->
+                <div class="mt-12 bg-gradient-to-r from-brandRed-700 to-brandRed-800 text-white rounded-3xl p-6 sm:p-10 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="space-y-2 text-center md:text-left">
+                        <h3 class="text-2xl font-bold">Precisa de cálculo exato para sua festa ou evento?</h3>
+                        <p class="text-amber-100 text-sm max-w-xl">Use nosso simulador automático de quantitativo para aniversários e reuniões familiares!</p>
+                    </div>
+                    <button onclick="openPartyCalculator()" class="bg-brandYellow-400 hover:bg-brandYellow-500 text-brandRed-900 font-extrabold px-6 py-3.5 rounded-xl shadow-md transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-calculator mr-2"></i> Abrir Calculadora
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Onde Estamos Section -->
+        <section id="onde-estamos" class="py-16 bg-white border-t border-amber-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Location Information -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div>
+                            <span class="text-brandRed-600 font-extrabold text-xs uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full border border-red-100">Venha nos Visitar</span>
+                            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Onde Estamos</h2>
+                            <p class="text-slate-600 mt-2 text-sm">No centro da cidade com espaço aconchegante para um café quentinho e compras para o lar.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 p-4 rounded-xl bg-amber-50 border border-amber-100">
+                                <div class="w-10 h-10 rounded-xl bg-brandRed-600 text-white flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">Endereço Principal</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5">Rua das Breads & Flores, 123 - Centro</p>
+                                    <span class="text-[11px] text-amber-700 font-medium">Ponto de referência: Praça Central</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-xl bg-amber-50 border border-amber-100">
+                                <div class="w-10 h-10 rounded-xl bg-brandYellow-500 text-slate-900 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">Horário de Funcionamento</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5">Segunda a Sábado: 06:00h às 20:00h</p>
+                                    <p class="text-xs text-slate-600">Domingos e Feriados: 06:30h às 13:00h</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-xl bg-amber-50 border border-amber-100">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">Contato Directo & WhatsApp</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5">(00) 99999-8888</p>
+                                    <p class="text-xs text-slate-600">contato@padariasaborreal.com.br</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Map Preview -->
+                    <div class="lg:col-span-7">
+                        <div class="bg-slate-100 rounded-3xl overflow-hidden shadow-lg border border-slate-200 relative min-h-[380px] flex flex-col justify-between p-6 bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80');">
+                            
+                            <div class="flex justify-between items-start">
+                                <span class="bg-white/90 backdrop-blur-md text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md flex items-center gap-2">
+                                    <i class="fa-solid fa-map-pin text-brandRed-600"></i> Localização no Mapa
+                                </span>
+                                <span class="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                                    Loja Aberta Agora
+                                </span>
+                            </div>
+
+                            <div class="bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl max-w-sm space-y-3 border border-amber-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-brandRed-600 text-white flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-store"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-extrabold text-slate-900 text-sm">Sabor Real Padaria</h4>
+                                        <p class="text-xs text-slate-500">Estacionamento próprio no local</p>
+                                    </div>
+                                </div>
+                                <a href="https://maps.google.com" target="_blank" class="w-full bg-brandRed-600 hover:bg-brandRed-700 text-white text-xs font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-diamond-turn-right"></i>
+                                    <span>Abrir no Google Maps</span>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Shopping Cart Drawer Overlay -->
+    <div id="cart-drawer-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCartDrawer()"></div>
+    
+    <div id="cart-drawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Drawer Header -->
+        <div class="p-5 bg-gradient-to-r from-brandRed-700 to-brandRed-800 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-basket-shopping text-2xl text-brandYellow-400"></i>
+                <div>
+                    <h3 class="font-bold text-lg">Sua Encomenda</h3>
+                    <p class="text-xs text-amber-200">Revise os itens selecionados</p>
+                </div>
+            </div>
+            <button onclick="toggleCartDrawer()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Content List -->
+        <div id="cart-items-container" class="flex-grow overflow-y-auto p-5 space-y-4">
+            <!-- Empty State -->
+            <div id="cart-empty" class="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
+                <div class="w-16 h-16 rounded-full bg-amber-100 text-brandYellow-600 flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 text-lg">Sua cesta está vazia</h4>
+                <p class="text-slate-500 text-xs max-w-xs">Adicione pães, doces ou salgados no nosso cardápio para simular seu pedido.</p>
+                <button onclick="quickAddSample()" class="mt-2 bg-brandYellow-400 text-brandRed-900 font-extrabold px-4 py-2 rounded-xl text-xs shadow hover:bg-brandYellow-500 transition-all">
+                    + Adicionar Pedido Amostra
+                </button>
+            </div>
+        </div>
+
+        <!-- Drawer Footer Form -->
+        <div id="cart-footer" class="p-5 border-t border-slate-200 bg-amber-50/50 space-y-4 hidden">
+            <!-- Delivery Type -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Opção de Entrega / Retirada:</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="border border-slate-300 bg-white p-2.5 rounded-xl flex items-center gap-2 cursor-pointer text-xs font-semibold">
+                        <input type="radio" name="order-type" value="Retirada na Loja" checked class="text-brandRed-600">
+                        <span>Retirada na Loja</span>
+                    </label>
+                    <label class="border border-slate-300 bg-white p-2.5 rounded-xl flex items-center gap-2 cursor-pointer text-xs font-semibold">
+                        <input type="radio" name="order-type" value="Entrega em Casa" class="text-brandRed-600">
+                        <span>Entrega em Casa</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Customer Name -->
+            <div>
+                <label for="customer-name" class="block text-xs font-bold text-slate-700 mb-1">Seu Nome:</label>
+                <input type="text" id="customer-name" placeholder="Ex: Maria Silva" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brandRed-500">
+            </div>
+
+            <!-- Total Price Row -->
+            <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+                <div>
+                    <span class="text-xs text-slate-500 font-medium block">Total Estimado</span>
+                    <span id="cart-total" class="text-2xl font-extrabold text-brandRed-700">R$ 0,00</span>
+                </div>
+            </div>
+
+            <!-- Action buttons: Simulate in app vs Real WhatsApp -->
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="simulateOrderFlow()" class="bg-brandRed-600 hover:bg-brandRed-700 text-white font-extrabold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 text-xs">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Simular Pedido</span>
+                </button>
+
+                <button onclick="sendOrderToWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 text-xs">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>Enviar no Whats</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Party Calculator Modal -->
+    <div id="party-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-amber-100 relative">
+            <button onclick="closePartyCalculator()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-brandYellow-400 text-brandRed-800 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-slate-900">Calculadora de Festas</h3>
+                    <p class="text-xs text-slate-500">Simule a quantidade exata para seu evento</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Número de Convidados (Adultos):</label>
+                    <input type="number" id="guests-count" value="10" min="1" max="100" onchange="calculatePartyQuantities()" onkeyup="calculatePartyQuantities()" class="w-full p-3 rounded-xl border border-slate-300 text-sm font-bold">
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl space-y-2">
+                    <h4 class="font-bold text-slate-900 text-xs text-brandRed-700 uppercase tracking-wider">Quantidade Recomendada:</h4>
+                    <ul class="space-y-1.5 text-slate-700">
+                        <li class="flex justify-between"><span>🥖 Salgadinhos variados:</span> <strong id="calc-salgados">120 unidades</strong></li>
+                        <li class="flex justify-between"><span>🎂 Bolo decorado:</span> <strong id="calc-bolo">1,0 kg</strong></li>
+                        <li class="flex justify-between"><span>🥐 Mini pães de queijo / croissants:</span> <strong id="calc-paes">30 unidades</strong></li>
+                        <li class="flex justify-between"><span>🥤 Bebidas / Sucos:</span> <strong id="calc-bebidas">5,0 Litros</strong></li>
+                    </ul>
+                </div>
+
+                <button onclick="addPartyKitToCart()" class="w-full bg-brandRed-600 hover:bg-brandRed-700 text-white font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Adicionar Kit Festa Sugerido ao Pedido</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Message Simulation Modal -->
+    <div id="whatsapp-preview-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-amber-100 relative">
+            <button onclick="closeWhatsAppPreview()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-base text-slate-900">Prévia da Mensagem WhatsApp</h3>
+                    <p class="text-xs text-slate-500">Como o pedido chegará para a padaria</p>
+                </div>
+            </div>
+
+            <!-- Simulated WhatsApp Box -->
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl font-mono text-xs text-slate-800 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto" id="whatsapp-sim-text">
+                <!-- Text populated dynamically -->
+            </div>
+
+            <div class="mt-4 flex gap-2">
+                <button onclick="confirmRealWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Enviar para WhatsApp Real</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl z-50 text-xs font-bold flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toast-message">Item adicionado à cesta!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800">
+                
+                <!-- Col 1 -->
+                <div class="space-y-4 md:col-span-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-brandRed-600 flex items-center justify-center text-amber-100 font-bold">
+                            <i class="fa-solid fa-wheat-awn text-xl"></i>
+                        </div>
+                        <span class="text-xl font-extrabold text-white">Sabor<span class="text-brandRed-500">Real</span></span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Simulação do projeto de site institucional e canal de encomendas online para Padaria & Empório de Estivas.
+                    </p>
+                </div>
+
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3">Links Rápidos</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#encomendas" class="hover:text-brandYellow-400 transition-colors">Cardápio de Encomendas</a></li>
+                        <li><a href="#simulador-pedidos" class="hover:text-brandYellow-400 transition-colors">Simulador em Tempo Real</a></li>
+                        <li><a href="#como-pedir" class="hover:text-brandYellow-400 transition-colors">Como Funciona</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3">Nossos Produtos</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#encomendas" class="hover:text-brandYellow-400 transition-colors">Pães Artesanais</a></li>
+                        <li><a href="#encomendas" class="hover:text-brandYellow-400 transition-colors">Doces & Bolos Caseiros</a></li>
+                        <li><a href="#encomendas" class="hover:text-brandYellow-400 transition-colors">Estivas & Frios</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4 -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3">Formas de Pagamento</h4>
+                    <div class="flex items-center gap-3 mb-4 text-xl text-slate-400">
+                        <i class="fa-brands fa-pix text-emerald-400"></i>
+                        <i class="fa-solid fa-credit-card"></i>
+                        <i class="fa-solid fa-money-bill-wave text-amber-400"></i>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Aceitamos Pix, Cartões de Débito/Crédito e Vale Refeição.</p>
+                </div>
+
+            </div>
+
+            <div class="pt-6 text-center text-xs text-slate-500">
+                <p>&copy; 2026 Padaria & Empório Sabor Real - Protótipo e Simulação Interativa do Projeto.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        // Sample Product Database
+        const products = [
+            {
+                id: 1,
+                name: "Pão Francês Tradicional (kg)",
+                category: "paes",
+                price: 18.90,
+                badge: "Mais Vendido",
+                badgeColor: "bg-brandRed-600 text-white",
+                img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=500&q=80",
+                desc: "Crocante por fora e macio por dentro. Assado fresquinho na hora."
+            },
+            {
+                id: 2,
+                name: "Croissant Folhado Artesanal",
+                category: "paes",
+                price: 7.50,
+                badge: "Artesanal",
+                badgeColor: "bg-brandYellow-500 text-slate-900",
+                img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=500&q=80",
+                desc: "Massa folhada na manteiga de alta qualidade, leve e saborosa."
+            },
+            {
+                id: 3,
+                name: "Bolo de Cenoura com Cobertura",
+                category: "doces",
+                price: 28.00,
+                badge: "Caseiro",
+                badgeColor: "bg-amber-600 text-white",
+                img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=80",
+                desc: "Bolo caseiro tradicional com generosa camada de brigadeiro."
+            },
+            {
+                id: 4,
+                name: "Coxinha de Frango com Catupiry",
+                category: "salgados",
+                price: 8.00,
+                badge: "Quentinho",
+                badgeColor: "bg-brandRed-600 text-white",
+                img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=500&q=80",
+                desc: "Salgado frito com massa leve de batata e recheio cremoso."
+            },
+            {
+                id: 5,
+                name: "Café Torrado e Moído (500g)",
+                category: "estivas",
+                price: 19.90,
+                badge: "Estivas",
+                badgeColor: "bg-slate-700 text-white",
+                img: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=500&q=80",
+                desc: "Grãos selecionados com torra média ideal para o café matinal."
+            },
+            {
+                id: 6,
+                name: "Queijo Mussarela Fatiado (200g)",
+                category: "estivas",
+                price: 14.50,
+                badge: "Frios",
+                badgeColor: "bg-brandYellow-500 text-slate-900",
+                img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=500&q=80",
+                desc: "Queijo fresco fatiado com máxima higiene e qualidade."
+            },
+            {
+                id: 7,
+                name: "Pão de Queijo Mineiro (10 un)",
+                category: "paes",
+                price: 15.00,
+                badge: "Sem Glúten",
+                badgeColor: "bg-emerald-600 text-white",
+                img: "https://images.unsplash.com/photo-1598153346810-860daa814c4b?auto=format&fit=crop&w=500&q=80",
+                desc: "Feito com polvilho artesanal e queijo meia cura especial."
+            },
+            {
+                id: 8,
+                name: "Torta Holandesa Cremosa",
+                category: "doces",
+                price: 35.00,
+                badge: "Especial",
+                badgeColor: "bg-brandRed-600 text-white",
+                img: "https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=500&q=80",
+                desc: "Creme suave de baunilha com ganache de chocolate meio amargo."
+            },
+            {
+                id: 9,
+                name: "Empadão de Frango com Requeijão",
+                category: "salgados",
+                price: 12.00,
+                badge: "Fatia Generosa",
+                badgeColor: "bg-amber-600 text-white",
+                img: "https://images.unsplash.com/photo-1628102491629-778571d893a3?auto=format&fit=crop&w=500&q=80",
+                desc: "Fatia caprichada de empadão assado com tempero caseiro."
+            }
+        ];
+
+        // State Variables
+        let cart = [];
+        let activeCategory = 'todos';
+        let soundEnabled = true;
+        let bakingSeconds = 522; // 8 mins 42 sec
+        let autoSimInterval = null;
+
+        // Sound Audio Effects via Web Audio API
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'add') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15); // E5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+                } else if (type === 'chime') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.5);
+                }
+            } catch (e) {
+                // fallback gracefully
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-label').innerText = `Efeitos Sonoros: ${soundEnabled ? 'ON' : 'OFF'}`;
+            showToast(`Efeitos sonoros ${soundEnabled ? 'ativados' : 'desativados'}`);
+        }
+
+        // Initialize App
+        window.onload = function() {
+            renderProducts(products);
+            startBakingTimer();
+            calculatePartyQuantities();
+        };
+
+        // Baking fresh countdown
+        function startBakingTimer() {
+            setInterval(() => {
+                if (bakingSeconds > 0) {
+                    bakingSeconds--;
+                } else {
+                    bakingSeconds = 600; // Reset 10 min
+                    playSound('chime');
+                    showToast("🍞 Nova fornada de pão quentinho acabou de sair!");
+                }
+                const mins = Math.floor(bakingSeconds / 60);
+                const secs = bakingSeconds % 60;
+                document.getElementById('baking-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function simulateFreshBatch() {
+            bakingSeconds = 5;
+            showToast("🔥 Fornada acelerada! Pães saindo em 5 segundos...");
+        }
+
+        // Render products
+        function renderProducts(items) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-500">
+                        <i class="fa-solid fa-magnifying-glass text-3xl mb-2 text-slate-300"></i>
+                        <p class="font-bold">Nenhum produto encontrado.</p>
+                        <button onclick="resetFilters()" class="mt-3 text-brandRed-600 font-bold text-xs underline">Ver todos os produtos</button>
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group";
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-48 overflow-hidden bg-slate-100">
+                            <img src="${prod.img}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/500x300/facc15/b91c1c?text=Produto'">
+                            <span class="absolute top-3 left-3 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm ${prod.badgeColor}">
+                                ${prod.badge}
+                            </span>
+                        </div>
+                        <div class="p-5 space-y-2">
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-brandRed-600 transition-colors">${prod.name}</h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${prod.desc}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 pt-0 flex items-center justify-between border-t border-slate-50 mt-2">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Preço</span>
+                            <span class="text-lg font-extrabold text-brandRed-700">R$ ${prod.price.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <button onclick="addToCart(${prod.id})" class="bg-amber-100 hover:bg-brandRed-600 text-brandRed-800 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Adicionar</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Category filter
+        function filterCategory(cat, btnElement) {
+            activeCategory = cat;
+            
+            const buttons = document.querySelectorAll('#category-tabs .cat-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-brandRed-600', 'text-white');
+                btn.classList.add('bg-amber-100', 'text-slate-700');
+            });
+
+            if (btnElement) {
+                btnElement.classList.remove('bg-amber-100', 'text-slate-700');
+                btnElement.classList.add('bg-brandRed-600', 'text-white');
+            }
+
+            applyFilters();
+        }
+
+        function filterSearch() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            let filtered = products.filter(p => {
+                const matchesCat = (activeCategory === 'todos' || p.category === activeCategory);
+                const matchesQuery = p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+            renderProducts(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            filterCategory('todos');
+        }
+
+        // Cart Management
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            playSound('add');
+            updateCartUI();
+            showToast(`"${product.name}" foi adicionado ao seu pedido!`);
+        }
+
+        function quickAddSample() {
+            addToCart(1);
+            addToCart(4);
+            addToCart(6);
+            toggleCartDrawer();
+        }
+
+        function updateQuantity(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+
+            item.qty += delta;
+            if (item.qty <= 0) {
+                cart = cart.filter(i => i.id !== id);
+            }
+
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalCount = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cart-badge').innerText = totalCount;
+
+            const container = document.getElementById('cart-items-container');
+            const empty = document.getElementById('cart-empty');
+            const footer = document.getElementById('cart-footer');
+
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                container.appendChild(empty);
+                footer.classList.add('hidden');
+                return;
+            }
+
+            let html = '<div class="space-y-3">';
+            let grandTotal = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                grandTotal += itemTotal;
+
+                html += `
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="font-bold text-xs text-slate-900 truncate">${item.name}</h4>
+                            <span class="text-[11px] text-brandRed-700 font-extrabold">R$ ${item.price.toFixed(2).replace('.', ',')} un</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border border-slate-200">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">-</button>
+                            <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">+</button>
+                        </div>
+
+                        <div class="text-right">
+                            <span class="text-xs font-black text-slate-900 block">R$ ${itemTotal.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+            
+            document.getElementById('cart-total').innerText = `R$ ${grandTotal.toFixed(2).replace('.', ',')}`;
+            footer.classList.remove('hidden');
+        }
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const backdrop = document.getElementById('cart-drawer-backdrop');
+            const isOpen = !drawer.classList.contains('translate-x-full');
+
+            if (isOpen) {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // Order Status Simulation
+        const simStages = [
+            {
+                title: "Pedido Recebido!",
+                desc: "Sua solicitação foi recebida e está aguardando confirmação da equipe de atendimento.",
+                icon: "fa-receipt",
+                timer: "15-20 min"
+            },
+            {
+                title: "Na Cozinha / Saindo do Forno!",
+                desc: "Seus pães e produtos estão sendo preparados quentinhos com carinho artesanal.",
+                icon: "fa-fire",
+                timer: "10-12 min"
+            },
+            {
+                title: "Embalado com Segurança!",
+                desc: "Tudo pronto e embalado na sacola térmica para garantir o frescor.",
+                icon: "fa-box-open",
+                timer: "3-5 min"
+            },
+            {
+                title: "Pronto para Entrega ou Retirada!",
+                desc: "Seu pedido já pode ser retirado no balcão ou está a caminho com o entregador!",
+                icon: "fa-circle-check",
+                timer: "Disponível Já!"
+            }
+        ];
+
+        function setSimulatedStage(stageNum) {
+            const stage = simStages[stageNum - 1];
+            
+            document.getElementById('sim-status-title').innerText = stage.title;
+            document.getElementById('sim-status-desc').innerText = stage.desc;
+            document.getElementById('sim-status-icon').innerHTML = `<i class="fa-solid ${stage.icon}"></i>`;
+            document.getElementById('sim-timer-text').innerText = stage.timer;
+
+            // Update stage step highlights
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`step-indicator-${i}`);
+                const btn = document.getElementById(`stage-btn-${i}`);
+                if (i <= stageNum) {
+                    el.classList.remove('opacity-40');
+                    if (btn) {
+                        btn.className = "stage-step-btn w-full p-3 rounded-xl bg-brandRed-600 font-bold text-left flex items-center justify-between border border-white/20";
+                    }
+                } else {
+                    el.classList.add('opacity-40');
+                    if (btn) {
+                        btn.className = "stage-step-btn w-full p-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-left flex items-center justify-between border border-white/10";
+                    }
+                }
+            }
+            playSound('chime');
+        }
+
+        function startAutoSimulation() {
+            if (autoSimInterval) clearInterval(autoSimInterval);
+            let current = 1;
+            setSimulatedStage(current);
+            showToast("🚀 Simulação automática iniciada!");
+
+            autoSimInterval = setInterval(() => {
+                current++;
+                if (current > 4) {
+                    clearInterval(autoSimInterval);
+                    showToast("✅ Simulação concluída com sucesso!");
+                    return;
+                }
+                setSimulatedStage(current);
+            }, 2500);
+
+            // Scroll to simulation section
+            document.getElementById('simulador-pedidos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function simulateOrderFlow() {
+            toggleCartDrawer();
+            startAutoSimulation();
+        }
+
+        // WhatsApp message generator
+        function buildWhatsAppMessage() {
+            const name = document.getElementById('customer-name').value.trim() || 'Cliente';
+            const orderType = document.querySelector('input[name="order-type"]:checked')?.value || 'Retirada na Loja';
+
+            let msg = `🥖 *NOVO PEDIDO - PADARIA SABOR REAL* 🥖\n\n`;
+            msg += `👤 *Nome:* ${name}\n`;
+            msg += `🚚 *Tipo:* ${orderType}\n\n`;
+            msg += `🛒 *Itens do Pedido:*\n`;
+
+            let grandTotal = 0;
+            cart.forEach(item => {
+                const sub = item.price * item.qty;
+                grandTotal += sub;
+                msg += `• ${item.qty}x ${item.name} - R$ ${sub.toFixed(2).replace('.', ',')}\n`;
+            });
+
+            msg += `\n💰 *Total Estimado:* R$ ${grandTotal.toFixed(2).replace('.', ',')}\n\n`;
+            msg += `Por favor, confirmem o pedido e horário de entrega!`;
+
+            return msg;
+        }
+
+        function sendOrderToWhatsApp() {
+            if (cart.length === 0) return;
+            const text = buildWhatsAppMessage();
+            document.getElementById('whatsapp-sim-text').innerText = text;
+            document.getElementById('whatsapp-preview-modal').classList.remove('hidden');
+        }
+
+        function closeWhatsAppPreview() {
+            document.getElementById('whatsapp-preview-modal').classList.add('hidden');
+        }
+
+        function confirmRealWhatsApp() {
+            const text = buildWhatsAppMessage();
+            const encoded = encodeURIComponent(text);
+            window.open(`https://wa.me/5500999998888?text=${encoded}`, '_blank');
+            closeWhatsAppPreview();
+        }
+
+        // Party Calculator
+        function openPartyCalculator() {
+            document.getElementById('party-modal').classList.remove('hidden');
+        }
+
+        function closePartyCalculator() {
+            document.getElementById('party-modal').classList.add('hidden');
+        }
+
+        function calculatePartyQuantities() {
+            const guests = parseInt(document.getElementById('guests-count').value) || 10;
+            
+            document.getElementById('calc-salgados').innerText = `${guests * 12} unidades`;
+            document.getElementById('calc-bolo').innerText = `${(guests * 0.1).toFixed(1).replace('.', ',')} kg`;
+            document.getElementById('calc-paes').innerText = `${guests * 3} unidades`;
+            document.getElementById('calc-bebidas').innerText = `${(guests * 0.5).toFixed(1).replace('.', ',')} Litros`;
+        }
+
+        function addPartyKitToCart() {
+            addToCart(4); // Coxinha
+            addToCart(3); // Bolo
+            addToCart(7); // Pão de queijo
+            closePartyCalculator();
+            toggleCartDrawer();
+            showToast("🎉 Kit Festa adicionado à cesta com sucesso!");
+        }
+
+        // Toast feedback
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = text;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
